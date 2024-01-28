@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Interface</title>
+</head>
+<body>
+    <h1>Welcome to the Chatbot Interface</h1>
+    <div>
+        <label for="userInput">Enter your message:</label>
+        <input type="text" id="userInput" />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <div id="chatHistory"></div>
+    <script>
+        function sendMessage() {
+            var userInput = document.getElementById("userInput").value;
+            // Send the user input to the server using AJAX or fetch
+            // Update the chat history with the server's response
+        }
+    </script>
+</body>
+</html>
