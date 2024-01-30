@@ -130,52 +130,33 @@ from dotenv import load_dotenv
 # Load environment variables from the .env file
 load_dotenv()
 
-from flask import Flask, render_template, request, jsonify
+
 import os
 from langchain_openai import ChatOpenAI
 
-# Initialize your Flask app
-app = Flask(__name__, template_folder='/home/chiotorresf/code/TfRocio/Justice-For-Everyone-/Templates')
+# APP
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+import streamlit as st
+import requests
 
-@app.route('/api/chat', methods=['POST'])
-def chat():
-    user_message = request.json['message']
+# Título de la aplicación
+st.title('Chatbot con Streamlit')
 
-    # Process the user's message and get the chatbot's response
-    response = invoke_chatbot(user_message)
+# Función para enviar y recibir mensajes del chatbot
+def send_message(message):
+    # URL de la API de tu chatbot
+    url = 'URL_DE_TU_API'
+    # Enviar la solicitud POST al chatbot con el mensaje del usuario
+    response = requests.post(url, json={'message': message})
+    # Devolver la respuesta del chatbot
+    return response.json()['response']
 
-    return jsonify({'message': response})
+# Crear una barra lateral para ingresar mensajes
+user_input = st.text_input("Ingresa tu mensaje aquí:")
 
-def invoke_chatbot(input_data, chat_history=None):
-    try:
-        # Get the system introduction
-        system_intro = "You are an AI assistant with extensive knowledge of traffic regulations in Mexico City."
-
-        # Generate the full input using the system introduction, chat history, and user input
-        full_input = generate_full_input(input_data, system_intro, chat_history)
-
-        # Prepare the input data with optional chat history
-        input_payload = {"input": full_input}
-
-        # Invoke the chatbot using the global retrieval_chain
-        response = retrieval_chain.invoke(input_payload)
-
-        # Extract and print the answer
-        answer = response.get("answer", "Sorry, I couldn't generate a valid response.")
-        print("Chatbot Response:", answer)
-
-        return answer
-
-    except Exception as e:
-        print(f"An error occurred while invoking the chatbot: {str(e)}")
-        # Handle the error gracefully, e.g., log the error, inform the user, or return an error message
-        return "Sorry, an error occurred while processing your request."
-
-if __name__ == '__main__':
-    # Set the global retrieval_chain before running the app
-    retrieval_chain = create_retrieval_chain(retriever, document_chain)
-    app.run(debug=True)
+# Cuando se presiona Enter, enviar el mensaje al chatbot y mostrar la respuesta
+if st.button("Enviar"):
+    # Enviar el mensaje del usuario al chatbot y obtener la respuesta
+    bot_response = send_message(user_input)
+    # Mostrar la respuesta del chatbot
+    st.text_area("Respuesta del Chatbot:", value=bot_response, height=200, max_chars=None, key=None)
